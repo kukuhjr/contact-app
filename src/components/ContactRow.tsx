@@ -13,6 +13,13 @@ import { colorPalette } from "../constants/colorPalette"
 import ButtonNavItem from "./ButtonNavItem"
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material"
 
+interface ContactRowProps {
+    first_name: string,
+    last_name: string,
+    id: number,
+    phones: string
+}
+
 const rootSyle = css`
     display: flex;
     column-gap: 1rem;
@@ -40,7 +47,7 @@ const avatarStyle = css`
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    background: ${colorPalette.primaryBlack};
+    background: ${colorPalette.blue300};
 `
 
 const contactDescStyle = css`
@@ -68,7 +75,7 @@ const phoneNumberStyle = css`
     ${fontPreset.body12Lig}
 `
 
-const ContactRow = () => {
+const ContactRow = ({ first_name, last_name, phones }: ContactRowProps) => {
     const navigate = useNavigate()
     const [active, setActive] = useState(false)
     const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false)
@@ -90,11 +97,11 @@ const ContactRow = () => {
                 <div className={contactDescStyle}>
                     <div className={contactAndPhoneStyle}>
                         <h6 className={nameStyle}>
-                            Name
+                            { first_name } { last_name }
                         </h6>
 
                         <span className={phoneNumberStyle}>
-                            Phone Number
+                            { phones }
                         </span>
                     </div>
 

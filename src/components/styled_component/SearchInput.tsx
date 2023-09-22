@@ -10,8 +10,8 @@ const SearchInputStyle = styled.input`
   width: 100%;
   padding: .5rem;
   padding-left: 2.125rem;
-  background: #F5F5F5;
-  border: 2px solid #F5F5F5;
+  background: ${colorPalette.white300};
+  border: 2px solid ${colorPalette.white300};
   border-radius: 4px;
   font-size: 14px;
   font-style: normal;
@@ -31,7 +31,7 @@ const SearchInputStyle = styled.input`
     border: 2px solid ${colorPalette.primaryBlue};
   }
   &:disabled {
-    border-color: #F5F5F5;
+    border-color: ${colorPalette.white300};
   }
 `
 

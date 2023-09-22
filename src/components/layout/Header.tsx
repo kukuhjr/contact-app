@@ -8,14 +8,15 @@ import { breakpoints } from "../../constants/mediaQueries"
 interface HeaderProps {
     title?: string,
     actionButton?: React.ReactNode,
-    backButton?: React.ReactNode
+    backButton?: React.ReactNode,
+    headerPadding?: string
 }
 
-const Header = ({ title, actionButton, backButton }: HeaderProps) => {
+const Header = ({ title, actionButton, backButton, headerPadding }: HeaderProps) => {
     return (
         <div
             className={css`
-                padding: 1.25rem 1rem;
+                padding: ${ headerPadding ?? '1.25rem 1rem' };
                 font-size: 20px;
                 border-radius: 4px;
                 ${breakpoints.md} {

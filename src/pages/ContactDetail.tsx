@@ -81,7 +81,8 @@ const ContactDetail = () => {
                 <div className={infoSection}>
                     <div className={nameSection}>
                         <h2 className={nameText}>
-                            CONTACT_NAME
+                            {/* CONTACT_NAME */}
+                            NOT FOUND
                         </h2>
 
                         <div className={avatarStyle} />
@@ -116,6 +117,19 @@ const ContactDetail = () => {
                             </p>
                         </div>
                     </div>
+
+                    {/* <div className={nameSection}>
+                        <div className={css`
+                            padding: 0 .75rem;
+                        `}>
+                            <span className={css`
+                                ${fontPreset.body12Lig}
+                                text-align: center;
+                            `}>
+                                The contact was not found, sorry.
+                            </span>
+                        </div>
+                    </div> */}
                 </div>
             </Container>
         </>

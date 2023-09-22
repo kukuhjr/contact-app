@@ -15,7 +15,7 @@ const containerStyle = css`
     justify-content: space-evenly;
     column-gap: 12px;
     align-items: center;
-    background: white;
+    background: ${colorPalette.white100};
     position: fixed;
     bottom: 0;
     width: 100%;

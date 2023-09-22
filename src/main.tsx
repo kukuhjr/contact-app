@@ -5,15 +5,15 @@ import './index.css'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 import { BrowserRouter } from 'react-router-dom'
 
-// const client = new ApolloClient({
-//   uri: "https://wpe-hiring.tokopedia.net/graphql",
-//   cache: new InMemoryCache(),
-// })
-
 const client = new ApolloClient({
-  uri: "https://rickandmortyapi.com/graphql",
+  uri: "https://wpe-hiring.tokopedia.net/graphql",
   cache: new InMemoryCache(),
 })
+
+// const client = new ApolloClient({
+//   uri: "https://rickandmortyapi.com/graphql",
+//   cache: new InMemoryCache(),
+// })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

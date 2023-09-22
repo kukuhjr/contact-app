@@ -4,13 +4,14 @@ import { Route, Routes } from "react-router-dom";
 import { Global, css } from '@emotion/react'
 import './App.css'
 import { colorPalette } from "./constants/colorPalette";
+import LoadingComponent from "./components/LoadingComponent";
 // COMPONENTS
 const Layout = lazy(() => import('./components/layout/Layout'))
 // PAGES
+const Character = lazy(() => import("./pages/Character"))
 const AddContact = lazy(() => import("./pages/AddContact"))
 const ContactDetail = lazy(() => import("./pages/ContactDetail"))
 const Homepage = lazy(() => import("./pages/Homepage"))
-// const Character = lazy(() => import("./pages/Character"))
 const Search = lazy(() => import("./pages/Search"))
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"))
 
@@ -33,7 +34,8 @@ const global = css`
   body {
     font-family: 'Inter', sans-serif;
     margin: 0;
-    color: ${colorPalette.primaryBlack}
+    color: ${colorPalette.primaryBlack};
+    background: ${colorPalette.white100};
   }
 
 `
@@ -43,14 +45,14 @@ function App() {
     <div>
       <Global styles={global} />
 
-      <Suspense fallback={<p>Loading....</p>}>
+      <Suspense fallback={<LoadingComponent height="100vh" />}>
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Homepage />} />
             <Route path="add-contact" element={<AddContact />} />
             <Route path=":contactId" element={<ContactDetail />} />
 
-            {/* <Route path=":id" element={<Character />} /> */}
+            <Route path="character/:id" element={<Character />} />
             <Route path="search" element={<Search />} />
             
             <Route path="*" element={<NotFoundPage />} />

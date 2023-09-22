@@ -15,6 +15,8 @@ const Character = () => {
 
     if(error) return <div>Something went wrong.</div>
 
+    console.log({ error, loading, data });
+
     return (
         <div className={css`
             padding: 1rem 0;
