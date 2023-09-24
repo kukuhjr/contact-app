@@ -1,14 +1,23 @@
-import { useRef, useState } from "react"
+import { useRef, useState, forwardRef, useMemo } from "react"
 import { css } from "@emotion/css"
 // ICONS
 import AddIcon from '@mui/icons-material/Add'
 import RemoveIcon from '@mui/icons-material/Remove'
+import CircularProgress from '@mui/material/CircularProgress'
+// MATERIAL UI
+import Snackbar from '@mui/material/Snackbar'
+import MuiAlert, { AlertProps } from '@mui/material/Alert'
 // COMPONENTS
 import Header from "../components/layout/Header"
 import { Button } from "../components/styled_component/Button"
-import { fontPreset } from "../constants/fontPreset"
 import { TextInput } from "../components/styled_component/Input"
 import { IconButtonStyled } from "../components/styled_component/IconButton"
+// CONSTANTS
+import { fontPreset } from "../constants/fontPreset"
+// HOOKS
+import { useCreateContactMutation } from "../hooks/useCreateContactMutation"
+// TYPES
+import { Phone } from "../types"
 
 const containerStyle = css`
     padding: 0 1rem;
@@ -34,20 +43,50 @@ const actionButtonStyle = css`
 `
 
 const AddContact = () => {
+    const Alert = forwardRef<HTMLDivElement, AlertProps>(function Alert(
+        props,
+        ref,
+    ) {
+        return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+    });
+
+    const [openAlert, setOpenAlert] = useState({ open: false, message: "", error: false });
     const [enableContact, setEnableContact] = useState(1)
+    
+    const firstNameRef = useRef<HTMLInputElement>(null)
+    const lastNameRef = useRef<HTMLInputElement>(null)
+    
+    const phoneNumberRef = useRef<HTMLInputElement>(null)
+    const phoneNumberRef2 = useRef<HTMLInputElement>(null)
+    const phoneNumberRef3 = useRef<HTMLInputElement>(null)
+    const phoneNumberRef4 = useRef<HTMLInputElement>(null)
+    const phoneNumberRef5 = useRef<HTMLInputElement>(null)
 
-    const firstNameRef = useRef(null)
-    const lastNameRef = useRef(null)
+    const phoneArr: Array<Phone> = [
+        { number: phoneNumberRef.current?.value ?? "" },
+        { number: phoneNumberRef2.current?.value ?? "" },
+        { number: phoneNumberRef3.current?.value ?? "" },
+        { number: phoneNumberRef4.current?.value ?? "" },
+        { number: phoneNumberRef5.current?.value ?? "" },
+    ]
 
-    const phoneNumberRef = useRef(null)
-    const phoneNumberRef2 = useRef(null)
-    const phoneNumberRef3 = useRef(null)
-    const phoneNumberRef4 = useRef(null)
-    const phoneNumberRef5 = useRef(null)
+    const { loading, error, data, createContact } = useCreateContactMutation({ 
+        firstName: firstNameRef.current?.value ?? "",
+        lastName: lastNameRef.current?.value ?? "",
+        phones: phoneArr.filter((item, index) => index + 1 <= enableContact)
+    })
 
-    const handleSumbitForm = () => {
-        console.log("HELLO");
-    }
+    console.log({ loading, error, data });
+
+    const handleOpenAlert = (message: string, error: boolean) => {
+        setOpenAlert({ open: true, message, error });
+    };
+    
+    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') { return; }
+    
+        setOpenAlert({ open: false, message: "", error: false });
+    };
 
     const handleClickAddPhone = () => {
         if(enableContact < 5) setEnableContact((state) => state + 1)
@@ -55,9 +94,48 @@ const AddContact = () => {
     }
 
     const handleClickRemovePhone = () => {
-        if(enableContact > 1) setEnableContact((state) => state - 1)
+        if(enableContact > 1) {
+            setEnableContact((state) => state - 1)
+        }
         else console.log("1 already");
     }
+
+    const handleSumbitForm = () => {
+        let error = false;
+
+        if(firstNameRef.current?.value === "") error = true
+        if(lastNameRef.current?.value === "") error = true
+        if(phoneNumberRef.current?.value === "") error = true
+
+        if(error) {
+            handleOpenAlert("All forms are not fulfilled", true)
+        } else {
+            createContact()
+        }
+    }
+
+    useMemo(() => {
+        // if(enableContact < 5) phoneNumberRef5.current?.value = ""
+        // if(enableContact < 4) phoneNumberRef4.current?.value = ""
+        // if(enableContact < 3) phoneNumberRef3.current?.value = ""
+        // if(enableContact < 2) phoneNumberRef2.current?.value = ""
+    }, [enableContact])
+
+    useMemo(() => {
+        if(data) { 
+            handleOpenAlert(`Add contact success`, false);
+        }
+
+        if(error) {
+            if(error.message.includes(`Uniqueness violation. duplicate key value violates unique constraint "phone_number_key"`)) {
+                handleOpenAlert(`Number phones already exist.`, true);
+            } else {
+                handleOpenAlert(`Add contact failed`, true);
+            }
+            
+            console.log(error);
+        }
+    }, [data, error])
 
     return (
         <>
@@ -173,11 +251,31 @@ const AddContact = () => {
                 </div>
 
                 <div className={actionButtonStyle}>
-                    <Button onClick={handleSumbitForm}>
-                        Submit
+                    <Button onClick={handleSumbitForm} disabled={loading}>
+                        {   loading ?
+                                <div className={css`padding: 0 12px`}>
+                                    <CircularProgress color="inherit" size={"14px"} />
+                                </div> :
+                            // NON LOADING
+                                "Submit"
+                        }
                     </Button>
                 </div>
             </div>
+
+            <Snackbar
+                open={openAlert.open}
+                autoHideDuration={6000}
+                onClose={handleCloseAlert}
+            >
+                <Alert
+                    onClose={handleCloseAlert}
+                    sx={{ width: '100%' }}
+                    severity={openAlert.error ? "error" : "success"}
+                >
+                    { openAlert.message }
+                </Alert>
+            </Snackbar>
         </>
     )
 }

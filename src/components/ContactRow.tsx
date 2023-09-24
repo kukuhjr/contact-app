@@ -75,7 +75,7 @@ const phoneNumberStyle = css`
     ${fontPreset.body12Lig}
 `
 
-const ContactRow = ({ first_name, last_name, phones }: ContactRowProps) => {
+const ContactRow = ({ first_name, last_name, phones, id }: ContactRowProps) => {
     const navigate = useNavigate()
     const [active, setActive] = useState(false)
     const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false)
@@ -135,7 +135,7 @@ const ContactRow = ({ first_name, last_name, phones }: ContactRowProps) => {
                 <ButtonNavItem
                     active={false}
                     onClick={() => {
-                        navigate("/123")
+                        navigate(`/${id}`)
                     }}
                     icon={<InfoOutlinedIcon />}
                     title={"Details"}

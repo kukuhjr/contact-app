@@ -30,7 +30,7 @@ export const useContacts = () => {
     const { error, loading, data } = useQuery(GET_CONTACTS, {
         variables: {
             where: {
-                "first_name": {"_like": "%faris%" }
+                "first_name": {"_like": "%%" }
             },
             limit: 10
         }
