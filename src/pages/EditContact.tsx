@@ -102,7 +102,7 @@ const EditContact = ({ contactData, changeView }: { contactData: Contact, change
         setOpenAlert({ open: true, message, error });
     };
     
-    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    const handleCloseAlert = (_?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') { return; }
     
         setOpenAlert({ open: false, message: "", error: false });
@@ -110,14 +110,14 @@ const EditContact = ({ contactData, changeView }: { contactData: Contact, change
 
     const handleClickAddPhone = () => {
         if(enableContact < 5) setEnableContact((state) => state + 1)
-        else console.log("5 already");
+        // else console.log("5 already");
     }
 
     const handleClickRemovePhone = () => {
         if(enableContact > 1) {
             setEnableContact((state) => state - 1)
         }
-        else console.log("1 already");
+        // else console.log("1 already");
     }
 
     const handleSumbitForm = () => {
@@ -207,8 +207,6 @@ const EditContact = ({ contactData, changeView }: { contactData: Contact, change
             } else {
                 handleOpenAlert(`Edit contact failed`, true);
             }
-            
-            console.log(error);
         }
     }, [data, error])
 
@@ -231,7 +229,7 @@ const EditContact = ({ contactData, changeView }: { contactData: Contact, change
                 handleOpenAlert(`Edit number failed`, true);
             }
             
-            console.log(editPhoneMutation.error);
+            // console.log(editPhoneMutation.error);
         }
     }, [editPhoneMutation.data, editPhoneMutation.error])
 

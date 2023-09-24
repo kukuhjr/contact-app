@@ -74,16 +74,18 @@ const AddContact = () => {
     const { loading, error, data, createContact } = useCreateContactMutation({ 
         firstName: firstName,
         lastName: lastName,
-        phones: phoneArr.filter((item, index) => index + 1 <= enableContact)
+        phones: phoneArr.filter((_, index) => {
+            return index + 1 <= enableContact
+        })
     })
 
-    console.log({ loading, error, data });
+    // console.log({ loading, error, data });
 
     const handleOpenAlert = (message: string, error: boolean) => {
         setOpenAlert({ open: true, message, error });
     };
     
-    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    const handleCloseAlert = (_?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') { return; }
     
         setOpenAlert({ open: false, message: "", error: false });
@@ -91,14 +93,14 @@ const AddContact = () => {
 
     const handleClickAddPhone = () => {
         if(enableContact < 5) setEnableContact((state) => state + 1)
-        else console.log("5 already");
+        // else console.log("5 already");
     }
 
     const handleClickRemovePhone = () => {
         if(enableContact > 1) {
             setEnableContact((state) => state - 1)
         }
-        else console.log("1 already");
+        // else console.log("1 already");
     }
 
     const handleSumbitForm = () => {
@@ -132,7 +134,7 @@ const AddContact = () => {
             handleOpenAlert(message, true)
         } else {
             createContact()
-            console.log(firstName, lastName, phoneArr.filter((item, index) => index + 1 <= enableContact));
+            // console.log(firstName, lastName, phoneArr.filter((_, index) => index + 1 <= enableContact));
         }
     }
 
@@ -155,7 +157,7 @@ const AddContact = () => {
                 handleOpenAlert(`Add contact failed`, true);
             }
             
-            console.log(error);
+            // console.log(error);
         }
     }, [data, error])
 

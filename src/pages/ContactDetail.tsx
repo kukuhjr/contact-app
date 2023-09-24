@@ -60,7 +60,7 @@ const ContactDetail = () => {
 
     const { error, loading, data } = useContact(params.contactId)
 
-    console.log({ error, loading, data });
+    // console.log({ error, loading, data });
 
     const handleGoToAllContacts = () => {
         navigate("/")

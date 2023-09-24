@@ -40,7 +40,7 @@ const Homepage = () => {
         limit: SIZE_PAGE,
         offset: (page - 1) * SIZE_PAGE,
     })
-    console.log({ error, loading, data, called });
+    console.log({ called });
     
     const [contactData, setContactData] = useState<Array<Contact>>([])
 
@@ -53,8 +53,9 @@ const Homepage = () => {
         setOpenAlert({ open: true, message, error });
     };
     
-    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    const handleCloseAlert = (_?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') { return; }
+        // console.log(event);
     
         setOpenAlert({ open: false, message: "", error: false });
     };
@@ -142,8 +143,8 @@ const Homepage = () => {
                                                     updateQuery(previousQueryResult, options) {
                                                         const newEdges = options.fetchMoreResult.contact;
                                 
-                                                        console.log("newEdges", newEdges);
-                                                        console.log("previousResult", previousQueryResult);
+                                                        // console.log("newEdges", newEdges);
+                                                        // console.log("previousResult", previousQueryResult);
 
                                                         setContactData([ ...previousQueryResult.contact, ...newEdges ])
                                                     },

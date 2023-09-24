@@ -81,7 +81,7 @@ const ContactRow = ({ first_name, last_name, phones, id, created_at }: Contact) 
     const isFavorite = JSON.parse(localStorage.getItem(fav_contact_key) ?? "[]").find((cont: Contact) => id === cont.id)
 
     const { loading, error, data, deleteContact } = useDeleteContact({ id })
-    console.log({ loading, error, data });
+    // console.log({ loading, error, data });
 
     const [active, setActive] = useState(false)
     const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false)
@@ -98,7 +98,7 @@ const ContactRow = ({ first_name, last_name, phones, id, created_at }: Contact) 
     const handleOpenAlert = (message: string, error: boolean) => {
         setOpenAlert({ open: true, message, error });
     };
-    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    const handleCloseAlert = (_?: React.SyntheticEvent | Event, reason?: string) => {
         if (reason === 'clickaway') { return; }
     
         setOpenAlert({ open: false, message: "", error: false });
@@ -126,8 +126,6 @@ const ContactRow = ({ first_name, last_name, phones, id, created_at }: Contact) 
             } else {
                 handleOpenAlert(`Add contact failed`, true);
             }
-            
-            console.log(error);
         }
     }, [data, error])
 

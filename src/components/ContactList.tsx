@@ -13,26 +13,7 @@ interface ContactListProps {
     sectionName: string
 }
 
-const ContactList = ({ isFavorite = false, contactData, onLoadPage, sectionName }: ContactListProps) => {
-    console.log({ isFavorite, contactData, onLoadPage });
-
-    // useEffect(() => {
-    //     const handleOnScroll = (e: any) => {
-    //         const box = document.getElementById('contact_list')
-            
-    //         console.log(e);
-    //         // console.log(e.scrollTop);
-    //         // console.log(e.clientHeight);
-    //         // console.log(e.scrollHeight);
-    //     }
-
-    //     window.addEventListener("scroll", handleOnScroll);
-
-    //     return () => {
-    //         window.removeEventListener("scroll", handleOnScroll);
-    //     }
-    // })
-
+const ContactList = ({ isFavorite = false, contactData, sectionName }: ContactListProps) => {
     if(isFavorite) {
         return (
             <div id="contact_list">
