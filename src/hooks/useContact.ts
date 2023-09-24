@@ -1,6 +1,6 @@
 import { gql, useQuery } from "@apollo/client"
 
-const GET_CONTACT = gql`
+export const GET_CONTACT = gql`
     query GetContactDetail($id: Int!){
         contact_by_pk(id: $id) {
             last_name

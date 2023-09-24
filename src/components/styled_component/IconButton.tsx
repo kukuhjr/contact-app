@@ -5,7 +5,7 @@ export const IconButtonStyled = styled.button`
     outline: none;
     border: none;
     background: none;
-    display: flex;
+    display: ${({ display }: { display?: string | undefined }) => (display ?? 'flex')};
     align-items: center;
     justify-content: center;
     border-radius: 50%;

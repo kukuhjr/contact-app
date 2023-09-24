@@ -1,24 +1,24 @@
-import {  useState } from "react"
+import { useContext, useMemo, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { css } from "@emotion/css"
 import styled from "@emotion/styled"
+// TYPES
+import { Contact } from "../types"
+// MATERIAL UI
+import { Alert, Button, CircularProgress, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Snackbar } from "@mui/material"
 // ICONS
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined'
 import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined'
 import GradeOutlinedIcon from '@mui/icons-material/GradeOutlined'
+import GradeIcon from '@mui/icons-material/Grade'
 // CONSTANTS
 import { fontPreset } from "../constants/fontPreset"
 import { colorPalette } from "../constants/colorPalette"
+import { fav_contact_key } from "../constants/global"
+import { useDeleteContact } from "../hooks/useDeleteContact"
 // COMPONENTS
 import ButtonNavItem from "./ButtonNavItem"
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from "@mui/material"
-
-interface ContactRowProps {
-    first_name: string,
-    last_name: string,
-    id: number,
-    phones: string
-}
+import { HomeContext } from "../hooks/homeContext"
 
 const rootSyle = css`
     display: flex;
@@ -75,17 +75,61 @@ const phoneNumberStyle = css`
     ${fontPreset.body12Lig}
 `
 
-const ContactRow = ({ first_name, last_name, phones, id }: ContactRowProps) => {
+const ContactRow = ({ first_name, last_name, phones, id, created_at }: Contact) => {
     const navigate = useNavigate()
+    const homeState = useContext(HomeContext)
+    const isFavorite = JSON.parse(localStorage.getItem(fav_contact_key) ?? "[]").find((cont: Contact) => id === cont.id)
+
+    const { loading, error, data, deleteContact } = useDeleteContact({ id })
+    console.log({ loading, error, data });
+
     const [active, setActive] = useState(false)
     const [isOpenDeleteDialog, setIsOpenDeleteDialog] = useState(false)
     const [isOpenFavoriteDialog, setIsOpenFavoriteDialog] = useState(false)
+    const [openAlert, setOpenAlert] = useState({ open: false, message: "", error: false });
+
 
     const handleOpenDeleteDialog = () => { setIsOpenDeleteDialog(true) }
     const handleCloseDeleteDialog = () => { setIsOpenDeleteDialog(false) }
 
     const handleOpenFavoriteDialog = () => { setIsOpenFavoriteDialog(true) }
     const handleCloseFavoriteDialog = () => { setIsOpenFavoriteDialog(false) }
+
+    const handleOpenAlert = (message: string, error: boolean) => {
+        setOpenAlert({ open: true, message, error });
+    };
+    const handleCloseAlert = (event?: React.SyntheticEvent | Event, reason?: string) => {
+        if (reason === 'clickaway') { return; }
+    
+        setOpenAlert({ open: false, message: "", error: false });
+    };
+
+    const handleSubmitFavorite = (contact: Contact) => {
+        const contacts = JSON.parse(localStorage.getItem(fav_contact_key) ?? "[]")
+
+        if(isFavorite !== undefined) {
+            const filteredContacts = contacts.filter((item: Contact) => { return item.id !== id })
+            localStorage.setItem(fav_contact_key, JSON.stringify(filteredContacts));
+        } else {
+            localStorage.setItem(fav_contact_key, JSON.stringify([ ...contacts, contact ]));
+        }
+    }
+
+    useMemo(() => {
+        if(data?.delete_contact_by_pk !== undefined) { 
+            handleCloseDeleteDialog()
+        }
+
+        if(error) {
+            if(error.message.includes(`Uniqueness violation. duplicate key value violates unique constraint "phone_number_key"`)) {
+                handleOpenAlert(`Number phones already exist.`, true);
+            } else {
+                handleOpenAlert(`Add contact failed`, true);
+            }
+            
+            console.log(error);
+        }
+    }, [data, error])
 
     return (
         <>
@@ -101,13 +145,9 @@ const ContactRow = ({ first_name, last_name, phones, id }: ContactRowProps) => {
                         </h6>
 
                         <span className={phoneNumberStyle}>
-                            { phones }
+                            { phones[0].number }
                         </span>
                     </div>
-
-                    {/* <div className={actionButtonStyle}>
-                        Button
-                    </div> */}
                 </div>
             </div>
 
@@ -127,7 +167,7 @@ const ContactRow = ({ first_name, last_name, phones, id }: ContactRowProps) => {
                     onClick={() => {
                         handleOpenFavoriteDialog()
                     }}
-                    icon={<GradeOutlinedIcon />}
+                    icon={isFavorite ? <GradeIcon /> : <GradeOutlinedIcon />}
                     title={"Favorite"}
                     color="#ffc107"
                 />
@@ -151,7 +191,7 @@ const ContactRow = ({ first_name, last_name, phones, id }: ContactRowProps) => {
                 <DialogTitle>{"Add to Favorite?"}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-delete-contact">
-                        Are you sure want to delete this contact. CONTACT_NAME ?
+                        Are you sure want to delete this contact. {first_name} {last_name} ?
                     </DialogContentText>
                 </DialogContent>
 
@@ -159,13 +199,34 @@ const ContactRow = ({ first_name, last_name, phones, id }: ContactRowProps) => {
                     <Button
                         onClick={handleCloseDeleteDialog}
                         color="error"
+                        disabled={loading}
                     >
-                        No
+                        {   loading ?
+                                <div className={css`padding: 0 12px`}>
+                                    <CircularProgress color="inherit" size={"14px"} />
+                                </div> :
+                            // NON-LOADING
+                                "No"
+                        }
                     </Button>
+
                     <Button
-                        onClick={handleCloseDeleteDialog}
+                        onClick={() => { 
+                            const contacts = JSON.parse(localStorage.getItem(fav_contact_key) ?? "[]")
+                            const filteredContacts = contacts.filter((item: Contact) => { return item.id !== id })
+
+                            localStorage.setItem(fav_contact_key, JSON.stringify(filteredContacts));
+                            deleteContact()
+                        }}
+                        disabled={loading}
                     >
-                        Yes
+                        {   loading ?
+                                <div className={css`padding: 0 12px`}>
+                                    <CircularProgress color="inherit" size={"14px"} />
+                                </div> :
+                            // NON-LOADING
+                                "Yes"
+                        }
                     </Button>
                 </DialogActions>
             </Dialog>
@@ -176,10 +237,10 @@ const ContactRow = ({ first_name, last_name, phones, id }: ContactRowProps) => {
                 onClose={handleCloseFavoriteDialog}
                 aria-describedby="alert-dialog-favorite-contact"
             >
-                <DialogTitle>{"Delete Contact?"}</DialogTitle>
+                <DialogTitle>{`${ isFavorite ? "Remove from" : "Add to" } Favorite list?`}</DialogTitle>
                 <DialogContent>
                     <DialogContentText id="alert-dialog-favorite-contact">
-                        Add this contact to Favorite list? CONTACT_NAME
+                        { isFavorite ? "Remove" : "Add" } this contact { isFavorite ? "from" : "to" } Favorite list. {first_name} {last_name} ?
                     </DialogContentText>
                 </DialogContent>
 
@@ -191,12 +252,31 @@ const ContactRow = ({ first_name, last_name, phones, id }: ContactRowProps) => {
                         No
                     </Button>
                     <Button
-                        onClick={handleCloseFavoriteDialog}
+                        onClick={() => {
+                            handleSubmitFavorite({ id, first_name, last_name, created_at, phones })
+                            handleCloseFavoriteDialog()
+
+                            homeState?.handleOpenAlert(`${isFavorite ? 'Removed from favorite' : 'Added to favorite' }`, false);  
+                        }}
                     >
                         Yes
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar
+                open={openAlert.open}
+                autoHideDuration={6000}
+                onClose={handleCloseAlert}
+            >
+                <Alert
+                    onClose={handleCloseAlert}
+                    sx={{ width: '100%' }}
+                    severity={openAlert.error ? "error" : "success"}
+                >
+                    { openAlert.message }
+                </Alert>
+            </Snackbar>
         </>
     )
 }

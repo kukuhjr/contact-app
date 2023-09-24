@@ -8,7 +8,6 @@ import LoadingComponent from "./components/LoadingComponent";
 // COMPONENTS
 const Layout = lazy(() => import('./components/layout/Layout'))
 // PAGES
-const Character = lazy(() => import("./pages/Character"))
 const AddContact = lazy(() => import("./pages/AddContact"))
 const ContactDetail = lazy(() => import("./pages/ContactDetail"))
 const Homepage = lazy(() => import("./pages/Homepage"))
@@ -52,7 +51,6 @@ function App() {
             <Route path="add-contact" element={<AddContact />} />
             <Route path=":contactId" element={<ContactDetail />} />
 
-            <Route path="character/:id" element={<Character />} />
             <Route path="search" element={<Search />} />
             
             <Route path="*" element={<NotFoundPage />} />

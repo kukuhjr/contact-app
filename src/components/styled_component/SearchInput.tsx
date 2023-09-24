@@ -1,10 +1,13 @@
+import { LazyQueryExecFunction, OperationVariables } from '@apollo/client';
 import styled from '@emotion/styled'
 import { css } from "@emotion/css"
 // CONSTANTS
 import { breakpoints } from '../../constants/mediaQueries'
 import { colorPalette } from '../../constants/colorPalette'
 // ICONS
-import SearchIcon from '@mui/icons-material/Search';
+import SearchIcon from '@mui/icons-material/Search'
+// COMPONENTS
+import { Button } from './Button';
 
 const SearchInputStyle = styled.input`
   width: 100%;
@@ -35,22 +38,43 @@ const SearchInputStyle = styled.input`
   }
 `
 
-export const SearchInput = () => (
-  <div className={css`
-    width: 100%;
-  `}>
-    <SearchIcon 
-      sx={{
-        position: "absolute",
-        padding: "8px",
-        textAlign: "center",
-        color: colorPalette.primaryBlue
-      }}
-      fontSize={"large"}
-    />
+interface SearchInputProps {
+  getContact: LazyQueryExecFunction<any, OperationVariables>,
+  inputRef: React.RefObject<HTMLInputElement>
+}
 
-    <SearchInputStyle
-      placeholder="Search contact"
-    />
-  </div>
-)
+export const SearchInput = ({ inputRef, getContact }: SearchInputProps) => {
+  return (
+    <div className={css`
+      display: flex;
+      column-gap: 6px;
+    `}>
+      <div className={css`
+        width: 100%;
+      `}>
+        <SearchIcon 
+          sx={{
+            position: "absolute",
+            padding: "8px",
+            textAlign: "center",
+            color: colorPalette.primaryBlue
+          }}
+          fontSize={"large"}
+        />
+
+        <SearchInputStyle
+          placeholder="Search contact"
+          ref={inputRef}
+        />
+      </div>
+
+      <Button
+        onClick={() => {
+          getContact()
+        }}
+      >
+        <SearchIcon fontSize='small' />
+      </Button>
+    </div>
+  )
+}

@@ -1,3 +1,4 @@
+import { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import { css } from "@emotion/css"
 import { useContact } from "../hooks/useContact"
@@ -11,6 +12,7 @@ import ArrowBackIosNewOutlinedIcon from '@mui/icons-material/ArrowBackIosNewOutl
 import { Container } from "../components/styled_component/Container"
 import Header from "../components/layout/Header"
 import { Button } from "../components/styled_component/Button"
+import EditContact from "./EditContact"
 // CONSTANTS
 import { colorPalette } from "../constants/colorPalette"
 import { fontPreset } from "../constants/fontPreset"
@@ -18,6 +20,8 @@ import { fontPreset } from "../constants/fontPreset"
 const ContactDetail = () => {
     const navigate = useNavigate()
     const params = useParams()
+
+    const [viewEdit, setViewEdit] = useState(false)
 
     const headerStyle = css`
         background: ${colorPalette.primaryBlue};
@@ -61,6 +65,15 @@ const ContactDetail = () => {
     const handleGoToAllContacts = () => {
         navigate("/")
     }
+
+    if(viewEdit) {
+        return <EditContact
+            contactData={data.contact_by_pk}
+            changeView={() => {
+                setViewEdit(false)
+            }}
+        />
+    }
     
     return (
         <>
@@ -76,7 +89,7 @@ const ContactDetail = () => {
                 }
                 actionButton={
                     <Button
-                        onClick={() => {}}
+                        onClick={() => { setViewEdit(true) }}
                     >
                         Edit
                     </Button>
@@ -166,11 +179,13 @@ const ContactDetail = () => {
                                                     flex-direction: column;
                                                     row-gap: 4px;
                                                 `}>
-                                                    { data.contact_by_pk?.phones.map((phone: Phone | undefined) => (
+                                                    { data.contact_by_pk?.phones.map((phone: Phone | undefined, index: number) => (
                                                         <p className={css`
                                                             ${fontPreset.body14Reg};
                                                             margin-top: 4px;
-                                                        `}>
+                                                        `}
+                                                            key={`phone-${index + 1}`}
+                                                        >
                                                             { phone?.number ?? "" }
                                                         </p>
                                                     )) }

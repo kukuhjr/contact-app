@@ -1,4 +1,4 @@
-import { useRef, useState, forwardRef, useMemo } from "react"
+import { useState, forwardRef, useMemo } from "react"
 import { css } from "@emotion/css"
 // ICONS
 import AddIcon from '@mui/icons-material/Add'
@@ -18,6 +18,7 @@ import { fontPreset } from "../constants/fontPreset"
 import { useCreateContactMutation } from "../hooks/useCreateContactMutation"
 // TYPES
 import { Phone } from "../types"
+import { validNameContact, validPhoneNumber } from "../constants/regExp"
 
 const containerStyle = css`
     padding: 0 1rem;
@@ -53,26 +54,26 @@ const AddContact = () => {
     const [openAlert, setOpenAlert] = useState({ open: false, message: "", error: false });
     const [enableContact, setEnableContact] = useState(1)
     
-    const firstNameRef = useRef<HTMLInputElement>(null)
-    const lastNameRef = useRef<HTMLInputElement>(null)
-    
-    const phoneNumberRef = useRef<HTMLInputElement>(null)
-    const phoneNumberRef2 = useRef<HTMLInputElement>(null)
-    const phoneNumberRef3 = useRef<HTMLInputElement>(null)
-    const phoneNumberRef4 = useRef<HTMLInputElement>(null)
-    const phoneNumberRef5 = useRef<HTMLInputElement>(null)
+    const [firstName, setFirstName] = useState("")
+    const [lastName, setLastName] = useState("")
+
+    const [phoneNumber, setPhoneNumber] = useState("")
+    const [phoneNumber2, setPhoneNumber2] = useState("")
+    const [phoneNumber3, setPhoneNumber3] = useState("")
+    const [phoneNumber4, setPhoneNumber4] = useState("")
+    const [phoneNumber5, setPhoneNumber5] = useState("")
 
     const phoneArr: Array<Phone> = [
-        { number: phoneNumberRef.current?.value ?? "" },
-        { number: phoneNumberRef2.current?.value ?? "" },
-        { number: phoneNumberRef3.current?.value ?? "" },
-        { number: phoneNumberRef4.current?.value ?? "" },
-        { number: phoneNumberRef5.current?.value ?? "" },
+        { number: phoneNumber },
+        { number: phoneNumber2 },
+        { number: phoneNumber3 },
+        { number: phoneNumber4 },
+        { number: phoneNumber5 },
     ]
 
     const { loading, error, data, createContact } = useCreateContactMutation({ 
-        firstName: firstNameRef.current?.value ?? "",
-        lastName: lastNameRef.current?.value ?? "",
+        firstName: firstName,
+        lastName: lastName,
         phones: phoneArr.filter((item, index) => index + 1 <= enableContact)
     })
 
@@ -102,23 +103,44 @@ const AddContact = () => {
 
     const handleSumbitForm = () => {
         let error = false;
+        let message = "All forms are not fulfilled";
 
-        if(firstNameRef.current?.value === "") error = true
-        if(lastNameRef.current?.value === "") error = true
-        if(phoneNumberRef.current?.value === "") error = true
+        if(firstName === "") { error = true } 
+        else if(lastName === "") { error = true }
+        else if(phoneNumber === "") { error = true }
+        else if(!validNameContact.test(`${firstName} ${lastName}`)) {
+            error = true
+            message = "Name format is not valid (character only)"
+        } else if(phoneNumber !== "" && !validPhoneNumber.test(phoneNumber)) {
+            error = true
+            message = "Phone number format is not valid. (indonesia phone number)"
+        } else if(phoneNumber2 !== "" && !validPhoneNumber.test(phoneNumber2)) {
+            error = true
+            message = "Phone number 2 format is not valid. (indonesia phone number)"
+        } else if(phoneNumber3 !== "" && !validPhoneNumber.test(phoneNumber3)) {
+            error = true
+            message = "Phone number 3 format is not valid. (indonesia phone number)"
+        } else if(phoneNumber4 !== "" && !validPhoneNumber.test(phoneNumber4)) {
+            error = true
+            message = "Phone number 4 format is not valid. (indonesia phone number)"
+        } else if(phoneNumber5 !== "" && !validPhoneNumber.test(phoneNumber5)) {
+            error = true
+            message = "Phone number 5 format is not valid. (indonesia phone number)"
+        }
 
         if(error) {
-            handleOpenAlert("All forms are not fulfilled", true)
+            handleOpenAlert(message, true)
         } else {
             createContact()
+            console.log(firstName, lastName, phoneArr.filter((item, index) => index + 1 <= enableContact));
         }
     }
 
     useMemo(() => {
-        // if(enableContact < 5) phoneNumberRef5.current?.value = ""
-        // if(enableContact < 4) phoneNumberRef4.current?.value = ""
-        // if(enableContact < 3) phoneNumberRef3.current?.value = ""
-        // if(enableContact < 2) phoneNumberRef2.current?.value = ""
+        if(enableContact < 5) setPhoneNumber5("")
+        if(enableContact < 4) setPhoneNumber4("")
+        if(enableContact < 3) setPhoneNumber3("")
+        if(enableContact < 2) setPhoneNumber2("")
     }, [enableContact])
 
     useMemo(() => {
@@ -151,7 +173,10 @@ const AddContact = () => {
                         <div className={css`margin-top: 8px`}>
                             <TextInput
                                 placeholder="First Name"
-                                ref={firstNameRef}
+                                value={firstName}
+                                onChange={(e) => {
+                                    setFirstName(e.target.value)
+                                }}
                             />
                         </div>
                     </div>
@@ -164,7 +189,10 @@ const AddContact = () => {
                         <div className={css`margin-top: 8px`}>
                             <TextInput
                                 placeholder="Last Name"
-                                ref={lastNameRef}
+                                value={lastName}
+                                onChange={(e) => {
+                                    setLastName(e.target.value)
+                                }}
                             />
                         </div>
                     </div>
@@ -208,12 +236,18 @@ const AddContact = () => {
                         `}>
                             <TextInput
                                 placeholder="Phone Number"
-                                ref={phoneNumberRef}
+                                value={phoneNumber}
+                                onChange={(e) => {
+                                    setPhoneNumber(e.target.value)
+                                }}
                             />
 
                             <TextInput
                                 placeholder="Phone Number 2"
-                                ref={phoneNumberRef2}
+                                value={phoneNumber2}
+                                onChange={(e) => {
+                                    setPhoneNumber2(e.target.value)
+                                }}
                                 className={css`
                                     display: ${enableContact > 1 ? 'block' : 'none'};
                                     transition: display 400ms ease;
@@ -222,7 +256,10 @@ const AddContact = () => {
 
                             <TextInput
                                 placeholder="Phone Number 3"
-                                ref={phoneNumberRef3}
+                                value={phoneNumber3}
+                                onChange={(e) => {
+                                    setPhoneNumber3(e.target.value)
+                                }}
                                 className={css`
                                     display: ${enableContact > 2 ? 'block' : 'none'};
                                     transition: display 400ms ease;
@@ -231,7 +268,10 @@ const AddContact = () => {
 
                             <TextInput
                                 placeholder="Phone Number 4"
-                                ref={phoneNumberRef4}
+                                value={phoneNumber4}
+                                onChange={(e) => {
+                                    setPhoneNumber4(e.target.value)
+                                }}
                                 className={css`
                                     display: ${enableContact > 3 ? 'block' : 'none'};
                                     transition: display 400ms ease;
@@ -240,7 +280,10 @@ const AddContact = () => {
 
                             <TextInput
                                 placeholder="Phone Number 5"
-                                ref={phoneNumberRef5}
+                                value={phoneNumber5}
+                                onChange={(e) => {
+                                    setPhoneNumber5(e.target.value)
+                                }}
                                 className={css`
                                     display: ${enableContact > 4 ? 'block' : 'none'};
                                     transition: display 400ms ease;

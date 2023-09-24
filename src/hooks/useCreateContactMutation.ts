@@ -1,5 +1,6 @@
 import { gql, useMutation } from "@apollo/client"
 import { Phone } from "../types"
+import { GET_ALL_CONTACT } from "./useContacts"
 
 const CREATE_CONTACT = gql`
     mutation AddContactWithPhones(
@@ -41,7 +42,10 @@ export const useCreateContactMutation = ({ firstName, lastName, phones }: useCre
             first_name: firstName,
             last_name: lastName,
             phones
-        }
+        },
+        refetchQueries: [
+            { query: GET_ALL_CONTACT }
+        ]
     })
 
     return { error, loading, data, createContact }

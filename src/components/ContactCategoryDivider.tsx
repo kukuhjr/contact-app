@@ -9,14 +9,18 @@ const containerStyle = css`
     padding: 4px 0;
 `
 
-const ContactCategoryDivider = () => {
+interface ContactCategoryDividerProps {
+    title: string
+}
+
+const ContactCategoryDivider = ({ title }: ContactCategoryDividerProps) => {
     return (
         <div className={containerStyle}>
             <div>
                 <span className={css`
                     ${fontPreset.body14Med}
                 `}>
-                    Favorite
+                    { title ?? "" }
                 </span>
             </div>
 
